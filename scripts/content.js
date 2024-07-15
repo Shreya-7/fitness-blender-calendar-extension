@@ -9,6 +9,10 @@ window.addEventListener('load', () => {
             for (const [date, workouts] of Object.entries(currentValue)) {
                 console.log(`${date}: ${workouts}`);
 
+                if (workouts == false) {
+                    continue;
+                }
+
                 // the target calendar element for the day
                 const dayElementPattern = `a[href="/my/calendar/day/${date}"]`;
                 const dayElement = document.querySelector(dayElementPattern);
@@ -30,17 +34,22 @@ window.addEventListener('load', () => {
                 if (!dayElement.querySelector(".schedule-slots")) {
                     const outerDiv = document.createElement("div");
                     outerDiv.classList.add("schedule-slots");
+
+                    for(i=0; i<5; i++) {
+                        const emptySlotElement = createSlotElement("is-empty");
+                        outerDiv.appendChild(emptySlotElement);
+                    }
+
                     dayElement.querySelector(".date-header").insertAdjacentElement("afterend", outerDiv);
                 }
 
                 workouts.forEach(workout => {
-                    const workoutElement = document.createElement("div");
+                    const workoutElement = createSlotElement("is-workout");
                     const formattedWorkout = workout.charAt(0).toUpperCase() + workout.slice(1);
-                    workoutElement.classList.add("slot");
-                    workoutElement.classList.add("partial-content");
-                    workoutElement.classList.add("is-workout");
                     workoutElement.innerHTML = `<span>${formattedWorkout}</span>`
-                    dayElement.querySelector(".schedule-slots").appendChild(workoutElement);
+
+                    const emptySlotElement = dayElement.querySelector(".schedule-slots .is-empty");
+                    dayElement.querySelector(".schedule-slots").replaceChild(workoutElement, emptySlotElement);
                 })
             }
         })
@@ -50,4 +59,13 @@ window.addEventListener('load', () => {
     }, 1000);
     
 });
+
+function createSlotElement(type) {
+    const workoutElement = document.createElement("div");
+    workoutElement.classList.add("slot");
+    workoutElement.classList.add("partial-content");
+    workoutElement.classList.add(type);
+
+    return workoutElement;
+}
 
