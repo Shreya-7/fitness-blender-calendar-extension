@@ -17,6 +17,11 @@ window.addEventListener("load", () => {
                 const dayElementPattern = `a[href="/my/calendar/day/${date}"]`;
                 const dayElement = document.querySelector(dayElementPattern);
 
+                // in view for month A, day elements for other months will not be present
+                if (!dayElement) {
+                    continue;
+                }
+
                 // add a "no-activity" type container only if not present
                 if (!dayElement.querySelector(".activity-icon")) {
                     const outerDiv = document.createElement("div");
